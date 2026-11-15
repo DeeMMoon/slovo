@@ -267,6 +267,7 @@ function setAuthMode(mode) {
   $('auth-password').required = mode !== 'reset';
   $('auth-password').autocomplete = ['signup', 'password'].includes(mode) ? 'new-password' : 'current-password';
   $('auth-title').textContent = {signin: 'С возвращением.', signup: 'Начните с одного слова.', reset: 'Восстановить доступ', password: 'Ваш новый пароль'}[mode];
+  $('auth-description').textContent = mode === 'signup' ? 'Укажите почту и придумайте пароль. После регистрации можно сразу начать учиться.' : 'Войдите, чтобы открыть общий словарь и свой прогресс.';
   $('auth-submit').textContent = {signin: 'Войти', signup: 'Создать аккаунт', reset: 'Отправить ссылку', password: 'Сохранить пароль'}[mode];
   $('auth-switch').textContent = mode === 'signin' ? 'Создать аккаунт' : 'Уже есть аккаунт? Войти';
   $('auth-reset').hidden = mode !== 'signin';
@@ -307,7 +308,8 @@ if (cloud.enabled) {
   });
   cloud.init().then(async () => { showAccount(); if (cloud.user) await refreshCloud(); }).catch(error => { $('auth-message').textContent = error.message; });
   $('auth-switch').onclick = () => setAuthMode(authMode === 'signin' ? 'signup' : 'signin');
-  $('auth-reset').onclick = () => setAuthMode('reset');
+  // shortcut: email recovery needs SMTP; enable the reset form after a mail provider is configured.
+  $('auth-reset').onclick = () => { $('auth-message').textContent = 'Восстановление пароля по почте пока не подключено. Обратитесь к владельцу приложения.'; };
   $('auth-form').onsubmit = async event => {
     event.preventDefault(); $('auth-submit').disabled = true; $('auth-message').textContent = '';
     try {

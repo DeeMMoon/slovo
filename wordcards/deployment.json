@@ -11,5 +11,6 @@
   "siteUrl": "https://deemmoon.github.io/slovo/",
   "verifiedDeploymentRun": "https://github.com/DeeMMoon/slovo/actions/runs/43772229484",
   "authSiteUrlConfigured": true,
-  "smtpConfigured": false
+  "smtpConfigured": false,
+  "emailConfirmationRequired": false
 }

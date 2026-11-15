@@ -1,0 +1,50 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const WordCards = require('../dist/core.js');
+const source = fs.readFileSync(require.resolve('../dist/cloud.js'), 'utf8');
+const cards = WordCards.seeds();
+let rpcError = null;
+let signedIn = true;
+let authSubscribed = false;
+let remote = cards.map(c => ({...c, owner_id: c.id === 'starter-1' ? 'user-1' : null}));
+const calls = [];
+const client = {
+  auth: {getSession: async () => {assert.equal(authSubscribed, true, 'Subscribe before reading the session so password recovery events are not missed'); return {data: {session: {user: {id: 'user-1', email: 'test@example.com'}}}};}, onAuthStateChange() {authSubscribed = true;}, signOut: async () => {signedIn = false; return {}; }},
+  rpc: async (name, args) => {calls.push({name, args}); return {data: remote, error: rpcError}; }
+};
+const context = {window: {SLOVO_CONFIG: {supabaseUrl: 'https://example.supabase.co', supabasePublishableKey: 'test'}, supabase: {createClient: () => client}}, WordCards};
+vm.runInNewContext(source, context);
+const cloud = context.window.SlovoCloud;
+const plain = x => JSON.parse(JSON.stringify(x));
+(async () => {
+  await cloud.init();
+  assert.deepEqual(await cloud.load(), cards);
+  assert.equal(cloud.canEdit('starter-1'), true);
+  assert.equal(cloud.canEdit('starter-2'), false);
+  const known = cards.map((c,i) => i ? c : {...c, status: 'known'});
+  assert.deepEqual(plain(cloud.changes(cards, known)), {upserts: [], deletes: [], progress: [{card_id: 'starter-1', status: 'known'}]});
+  const edited = [{...cards[0], ru: 'новый перевод'}];
+  const diff = plain(cloud.changes(cards.slice(0,1), edited));
+  assert.equal(diff.upserts[0].expected.ru, cards[0].ru);
+  assert.equal(diff.upserts[0].ru, 'новый перевод');
+  assert.equal(diff.progress.length, 0);
+  const added = plain(cloud.changes([], cards.slice(0,1)));
+  assert.equal(added.upserts[0].expected, null);
+  assert.equal(added.progress.length, 1);
+  assert.equal(cloud.changes(cards, []).deletes.length, cards.length);
+  const original = JSON.stringify(cards);
+  await cloud.save(cards, known);
+  assert.equal(calls.at(-1).name, 'slovo_save');
+  assert.equal(JSON.stringify(cards), original);
+  rpcError = new Error('Network failed');
+  await assert.rejects(cloud.save(cards, known), /Network failed/);
+  assert.equal(JSON.stringify(cards), original);
+  rpcError = null;
+  await cloud.signOut();
+  assert.equal(signedIn, false);
+  assert.equal(cloud.canEdit('starter-1'), false);
+  await assert.rejects(cloud.load(), /Войдите/);
+  await assert.rejects(cloud.save(cards, known), /Войдите/);
+  console.log('Passed: cloud change isolation, ownership, network failure and sign-out.');
+})().catch(error => {console.error(error); process.exitCode = 1;});

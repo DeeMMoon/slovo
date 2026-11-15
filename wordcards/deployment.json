@@ -1,0 +1,11 @@
+{
+  "provider": "github-pages-supabase",
+  "supabaseProjectRef": "vwopbdmxlxswmididevm",
+  "supabaseProjectUrl": "https://vwopbdmxlxswmididevm.supabase.co",
+  "schemaApplied": "001_shared_cards.sql",
+  "seededCards": 18,
+  "databaseVerified": true,
+  "rlsCrossUserTestPassed": true,
+  "repositoryUrl": "https://github.com/DeeMMoon/slovo",
+  "sitePublished": false
+}

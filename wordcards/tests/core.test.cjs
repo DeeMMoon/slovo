@@ -1,0 +1,17 @@
+const assert = require('node:assert/strict');
+const {seeds, validateCards, parseBackup, makeQueue} = require('../dist/core.js');
+const cards = seeds();
+assert.equal(cards.length, 18);
+assert.deepEqual(parseBackup(JSON.stringify({version: 1, cards})), cards);
+assert.deepEqual(parseBackup('{"version":1,"cards":[]}'), []);
+for (const bad of [{version: 2, cards}, {version: 1, cards: [null]}, {version: 1, cards: [cards[0], cards[0]]}, {version: 1, cards: [{...cards[0], examples: []}]}, {version: 1, cards: [{...cards[0], status: 'bad'}]}, {version: 1, cards: [{...cards[0], en: '   '}]}]) assert.throws(() => parseBackup(JSON.stringify(bad)));
+const mixed = cards.map((c, i) => ({...c, status: i % 2 ? 'known' : 'learning'}));
+assert.equal(makeQueue(mixed, 'known', false).length, 9);
+assert.equal(makeQueue(mixed, 'learning', false).length, 9);
+assert.deepEqual(makeQueue(cards, 'all', false), cards.map(c => c.id));
+const shuffled = makeQueue(cards, 'all', true, () => .25);
+assert.equal(new Set(shuffled).size, cards.length);
+assert.notDeepEqual(shuffled, makeQueue(cards, 'all', false));
+assert.deepEqual([...shuffled].sort(), cards.map(c => c.id).sort());
+assert.equal(validateCards([{...cards[0], en: '  hello  '}])[0].en, 'hello');
+console.log('Passed: backup validation, round-trip, filters, shuffle and seed data.');

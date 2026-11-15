@@ -1,0 +1,6 @@
+wordcards/*.zip
+wordcards/preview*.jpg
+*.env
+.env.*
+node_modules/
+slovo-backup-*.json

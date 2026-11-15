@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245c48">
+  <meta name="description" content="Английский понемногу: карточки, подсказки и примеры в вашем темпе.">
+  <title>Слово — английский понемногу</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23245c48'/%3E%3Ctext x='16' y='46' font-size='42' fill='white' font-family='serif'%3Es%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="core.js" defer></script>
+  <script src="config.js" defer></script>
+  <script src="cloud.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="Слово — на главную"><span class="brand-icon">s<span>·</span></span><span>слово<span class="brand-dot">.</span></span></a>
+    <div class="sidebar-caption">АНГЛИЙСКИЙ ПОНЕМНОГУ</div>
+    <nav aria-label="Главная навигация">
+      <button class="nav-item active" data-view="study"><span class="nav-icon">▱</span> Практика <span class="nav-arrow">↗</span></button>
+      <button class="nav-item" data-view="library"><span class="nav-icon">▦</span> Мои карточки <span class="nav-count" id="nav-count">0</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="small-plant" aria-hidden="true">✳</div>
+      <p>Большой словарный запас<br>начинается с одного слова.</p>
+      <div class="local-badge"><span></span> <span id="storage-label">Локальная версия</span></div>
+      <p class="local-note" id="storage-note">Карточки сохраняются<br>в этом браузере.</p>
+    </div>
+  </aside>
+  <main>
+    <header class="topbar"><span id="breadcrumb">Ваше пространство / <strong>Практика</strong></span><button class="button primary" id="add-card"><span aria-hidden="true">＋</span> Добавить карточку</button></header>
+    <div class="page">
+      <section class="account-bar" id="account-bar" hidden><span id="account-label"></span><div><button class="button" id="refresh-cloud">↻ Обновить словарь</button><button class="button" id="sign-out">Выйти</button></div></section>
+      <section class="auth-panel" id="auth-panel" hidden><div class="eyebrow">ВАШИ СЛОВА — НА ВСЕХ УСТРОЙСТВАХ</div><h2 id="auth-title">С возвращением.</h2><p id="auth-description">Войдите, чтобы открыть общий словарь и свой прогресс.</p><form id="auth-form"><label id="email-label">Электронная почта<input id="auth-email" type="email" required autocomplete="email" maxlength="254"></label><label id="password-label">Пароль<input id="auth-password" type="password" required minlength="8" maxlength="128" autocomplete="current-password"></label><p class="form-error" id="auth-message" role="status"></p><button type="submit" class="button primary" id="auth-submit">Войти</button></form><div class="auth-links"><button id="auth-switch">Создать аккаунт</button><button id="auth-reset">Забыли пароль?</button></div></section>
+      <div id="app-content">
+      <section class="intro"><div><div class="eyebrow">МАЛЕНЬКИЕ ШАГИ, БОЛЬШОЙ ПРОГРЕСС</div><h1 id="page-title">Слово за словом.</h1><p id="page-subtitle">Вспоминайте, открывайте новое и учитесь в своём темпе.</p></div><div class="intro-stamp" aria-hidden="true">a little<br><em>every day</em><span>✦</span></div></section>
+      <section class="stats" aria-label="Ваш прогресс">
+        <div class="stat"><span class="stat-icon">▱</span><div><strong id="stat-all">0</strong><span>Всего карточек</span></div></div>
+        <div class="stat"><span class="stat-icon amber">◒</span><div><strong id="stat-learning">0</strong><span>Ещё учу</span></div></div>
+        <div class="stat"><span class="stat-icon green">✓</span><div><strong id="stat-known">0</strong><span>Уже запомнил</span></div></div>
+        <div class="stat progress-stat"><div class="progress-label"><span>Ваш словарный запас растёт</span><strong id="stat-percent">0%</strong></div><div class="progress-track"><div id="overall-progress"></div></div></div>
+      </section>
+      <section class="workspace">
+        <div class="section-heading"><h2 id="section-title">Время для практики</h2><span id="section-note">Несколько минут для себя</span></div>
+        <div class="toolbar"><div class="tabs" role="group" aria-label="Фильтр карточек"><button class="tab active" data-filter="all">Все слова <span id="count-all"></span></button><button class="tab" data-filter="learning">Учу <span id="count-learning"></span></button><button class="tab" data-filter="known">Запомнил <span id="count-known"></span></button></div><div class="study-options"><select id="direction" aria-label="Направление перевода"><option value="en">EN → RU</option><option value="ru">RU → EN</option></select><label class="shuffle-label"><input type="checkbox" id="shuffle"><span class="toggle"></span><span>Вперемешку</span></label></div></div>
+        <div id="study-view">
+          <div class="session-top"><span id="session-label"></span><span class="session-dots" aria-hidden="true">✦ <span>Вспомните перед тем, как открыть</span></span></div>
+          <div class="card-scene" id="card-scene">
+            <article class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Перевернуть карточку" aria-describedby="flip-help">
+              <div class="card-face card-front"><div class="card-top"><span class="language-label" id="front-language">АНГЛИЙСКИЙ</span><span class="status-pill" id="card-status"></span></div><div class="word-area"><span class="word-type" id="word-type"></span><h2 id="front-word"></h2><div class="hint-area"><button class="hint-button" id="hint-button" aria-expanded="false">✧ <span>Нужна подсказка?</span></button><p id="hint-text" hidden></p></div></div><div class="card-footer"><span id="flip-help">Нажмите на карточку, чтобы увидеть ответ</span><span aria-hidden="true">↻</span></div></div>
+              <div class="card-face card-back" inert><div class="card-top"><span class="language-label" id="back-language">ПЕРЕВОД</span><span class="answer-label">✓ ПРОВЕРЬТЕ СЕБЯ</span></div><div class="answer-area"><h2 id="back-word"></h2><p id="back-secondary"></p><div class="examples"><h3>В КОНТЕКСТЕ</h3><ul id="examples"></ul></div></div><div class="card-footer"><span>Нажмите ещё раз, чтобы вернуться</span><span aria-hidden="true">↻</span></div></div>
+            </article>
+          </div>
+          <div class="study-actions" id="study-actions"><button class="button status-button" id="mark-learning"><span>◒</span> Ещё учу</button><button class="button status-button known-button" id="mark-known"><span>✓</span> Запомнил</button></div>
+          <div class="session-navigation" id="session-navigation"><button class="round-button" id="previous" aria-label="Предыдущая карточка">←</button><div class="session-progress"><div class="progress-track"><div id="session-progress"></div></div><span id="session-position"></span></div><button class="round-button next-button" id="next" aria-label="Следующая карточка">→</button></div>
+          <div class="empty-state" id="study-empty" hidden><div class="empty-icon">✦</div><h2 id="empty-title"></h2><p id="empty-description"></p><button class="button primary" id="empty-action"></button></div>
+          <p class="keyboard-note"><kbd>Пробел</kbd> перевернуть <span>·</span> <kbd>←</kbd> <kbd>→</kbd> листать</p>
+        </div>
+        <div id="library-view" hidden><div class="library-tools"><input id="search" type="search" placeholder="Найти слово или перевод…" aria-label="Поиск карточек"><span id="search-count"></span></div><div id="library-list"></div><div id="library-empty" class="empty-state" hidden><div class="empty-icon">⌕</div><h2>Пока ничего нет</h2><p>Попробуйте другой запрос или добавьте новую карточку.</p></div></div>
+      </section>
+      <footer class="page-footer"><span>Понемногу — тоже движение вперёд.</span><div><button id="export">↗ Экспорт</button><button id="import">↙ Импорт</button><input type="file" id="import-file" accept=".json,application/json" hidden></div></footer>
+      </div>
+    </div>
+  </main>
+  <dialog id="editor"><form id="card-form"><div class="modal-header"><div><div class="eyebrow">ВАШ СЛОВАРЬ</div><h2 id="editor-title">Новое слово — новый шаг</h2></div><button type="button" class="close-button" id="close-editor" aria-label="Закрыть">×</button></div><p class="modal-description">Добавьте слово или целую фразу. Всё остальное поможет её запомнить.</p><label>Слово или фраза на английском <span>*</span><input id="field-en" required maxlength="200" placeholder="Например, take your time" autocomplete="off"></label><label>Перевод на русский <span>*</span><input id="field-ru" required maxlength="300" placeholder="Не торопиться" autocomplete="off"></label><label>Подсказка на английском <span>*</span><textarea id="field-hint" required maxlength="1000" rows="2" placeholder="A short explanation without using the word itself"></textarea></label><label>Примеры на английском <span>*</span><textarea id="field-examples" required maxlength="5000" rows="4" placeholder="Take your time — there's no rush.&#10;You can take your time with this exercise."></textarea><small>Каждый пример с новой строки. Можно добавить несколько.</small></label><p id="form-error" class="form-error" role="alert"></p><div class="modal-footer"><button type="button" class="button" id="cancel-editor">Отмена</button><button type="submit" class="button primary">Сохранить карточку <span>↗</span></button></div></form></dialog>
+  <dialog id="confirm-dialog"><div class="confirm-content"><h2 id="confirm-title"></h2><p id="confirm-description"></p><div class="modal-footer"><button class="button" id="confirm-cancel">Отмена</button><button class="button primary" id="confirm-ok">Подтвердить</button></div></div></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
